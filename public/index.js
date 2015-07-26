@@ -10,18 +10,20 @@ var fiwareSensor = angular.module('fiware', ['ngMaterial']);
 		delete $httpProvider.defaults.headers.common['X-Requested-With'];
 	}
 ]);*/
-var SensorCtrl = function($scope,fiwareFactory){
+var SensorCtrl = function($scope,fiwareFactory,$timeout, $mdSidenav, $mdUtil, $log){
+
 	var valor;
 	var valueTemperature;
 	setInterval(function(){
 		fiwareFactory.getValues()
 		.then(function(data){
+			$scope.progress = true;
 				valor = data
 		}, function(error){
 			console.log(error)
 		});
 	},500)
-
+	
 	Highcharts.setOptions({
 			global: {
 					useUTC: false
@@ -247,7 +249,7 @@ var SensorCtrl = function($scope,fiwareFactory){
 				}
 			},
 			title: {
-					text: 'Temperature'
+					text: ''
 			},
 			xAxis: {
 					type: 'datetime',
@@ -255,7 +257,7 @@ var SensorCtrl = function($scope,fiwareFactory){
 			},
 			yAxis: {
 					title: {
-							text: 'Value'
+							text: 'Humidity value'
 					},
 					plotLines: [{
 							value: 0,
@@ -295,6 +297,18 @@ var SensorCtrl = function($scope,fiwareFactory){
 	});
 	
 };
+var LeftCtrl = function ($scope, $timeout, $mdSidenav, $log) {
+  $scope.close = function () {
+    $mdSidenav('left').close()
+      .then(function () {
+        $log.debug("close LEFT is done");
+      });
+
+  };
+};
+
+
 
 SensorCtrl.$inject = ['$scope','fiwareFactory'];
 fiwareSensor.controller('SensorCtrl', SensorCtrl);
+fiwareSensor.controller('LeftCtrl', LeftCtrl);
